@@ -8,7 +8,8 @@ import org.springframework.web.client.RestTemplate;
 
 import amith.auction.players.customentity.CustomTeam;
 import amith.auction.players.entity.Player;
-import amith.auction.players.exception.CustomException;
+import amith.auction.players.exception.DataNotFoundException;
+import amith.auction.players.exception.LimitExceededException;
 import amith.auction.players.repository.PlayerRepository;
 import amith.auction.players.service.PlayerService;
 
@@ -28,7 +29,7 @@ public class PlayerServiceImplementation implements PlayerService
 	}
 
 	@Override
-	public String addNewPlayer(Player player) throws CustomException {
+	public String addNewPlayer(Player player) throws LimitExceededException,DataNotFoundException {
 		CustomTeam cteam = restTemplate.getForObject("http://localhost:9002/teams/getByName/"+player.getTname(), CustomTeam.class);
 		if(cteam!=null)
 		{
@@ -43,20 +44,21 @@ public class PlayerServiceImplementation implements PlayerService
 				if((expenditure+player.getAmount())<=cteam.getMaxbudget())
 				{
 					playerrepo.save(player);
+					restTemplate.put("http://localhost:9002/teams/updatecount/"+player.getTname()+"/"+true,Player.class);
 					return "Player Added Successfully";
 				}
 				else
-					throw new CustomException("Maximum Budget Limit Exceeded in this Team");
+					throw new LimitExceededException("Maximum Budget Limit Exceeded in this Team");
 			}
 			else
-				throw new CustomException("Number of Player's Limit Exceeded in this Team");
+				throw new LimitExceededException("Number of Player's Limit Exceeded in this Team");
 		}
 		else
-			throw new CustomException("No such team is there in the database");
+			throw new DataNotFoundException("No such team is there in the database");
 	}
 
 	@Override
-	public String updateExistingPlayer(Long pid, String type) throws CustomException {
+	public String updateExistingPlayer(Long pid, String type) throws DataNotFoundException {
 		Player player = playerrepo.findByPid(pid);
 		if(player!=null)
 		{
@@ -64,11 +66,11 @@ public class PlayerServiceImplementation implements PlayerService
 			return "Player Data Updated Successfully";
 		}
 		else
-			throw new CustomException("No Such Player there in the database");
+			throw new DataNotFoundException("No Such Player there in the database");
 	}
 
 	@Override
-	public String deleteExistingPlayer(Long pid) throws CustomException {
+	public String deleteExistingPlayer(Long pid) throws DataNotFoundException {
 		Player player = playerrepo.findByPid(pid);
 		if(player!=null)
 		{
@@ -76,29 +78,29 @@ public class PlayerServiceImplementation implements PlayerService
 			return "Player Data Deleted Successfully";
 		}
 		else
-			throw new CustomException("No Such Player there in the database");
+			throw new DataNotFoundException("No Such Player there in the database");
 	}
 
 	@Override
-	public Iterable<Player> getPlayersByType(String type) throws CustomException {
+	public Iterable<Player> getPlayersByType(String type) throws DataNotFoundException {
 		List<Player> players = playerrepo.findByPtype(type);
 		if(players.size()>0)
 		{
 			return players;
 		}
 		else
-			throw new CustomException("No Such Type of Player there in the database");
+			throw new DataNotFoundException("No Such Type of Player there in the database");
 	}
 
 	@Override
-	public Player getPlayerById(Long pid) throws CustomException {
+	public Player getPlayerById(Long pid) throws DataNotFoundException {
 		Player player = playerrepo.findByPid(pid);
 		if(player!=null)
 		{
 			return player;
 		}
 		else
-			throw new CustomException("No Such Player there in the database");
+			throw new DataNotFoundException("No Such Player there in the database");
 	}
 	
 }

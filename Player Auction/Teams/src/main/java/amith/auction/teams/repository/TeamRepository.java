@@ -20,4 +20,12 @@ public interface TeamRepository extends JpaRepository<Team,String>
 	@Query("update Team set maxbudget=?2 where name=?1")
 	public void updateBudgetOfTeam(String name, float budget);
 
+	@Modifying
+	@Query("update Team set noofplayers=?2 where name=?1")
+	public void incrementCountOfTeam(String name,int value);
+
+	@Modifying
+	@Query("update Team set noofplayers=?2 where name=?1")
+	public void decrementCountOfTeam(String name,int value);
+
 }

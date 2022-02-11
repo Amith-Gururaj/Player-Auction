@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import amith.auction.teams.entity.Team;
-import amith.auction.teams.exception.CustomException;
+import amith.auction.teams.exception.ResourceAlreadyExistException;
+import amith.auction.teams.exception.ResourceNotFoundException;
 import amith.auction.teams.repository.TeamRepository;
 import amith.auction.teams.service.TeamService;
 
@@ -20,12 +21,12 @@ public class TeamServiceImplementation implements TeamService
 	}
 
 	@Override
-	public String addNewTeam(Team team) throws CustomException
+	public String addNewTeam(Team team) throws ResourceAlreadyExistException
 	{
 		Team checkteam = teamrepo.findByName(team.getName());
 		if(checkteam!=null)
 		{
-			throw new CustomException(team.getName()+" Team is already Exists");
+			throw new ResourceAlreadyExistException(team.getName()+" Team is already Exists");
 		}
 		else
 		{
@@ -40,7 +41,7 @@ public class TeamServiceImplementation implements TeamService
 	}
 
 	@Override
-	public Team getByName(String name) throws CustomException {
+	public Team getByName(String name) throws ResourceNotFoundException {
 		Team team = teamrepo.findByName(name);
 		if(team!=null)
 		{
@@ -48,12 +49,12 @@ public class TeamServiceImplementation implements TeamService
 		}
 		else
 		{
-			throw new CustomException("No such team is there in the database");
+			throw new ResourceNotFoundException("No such team is there in the database");
 		}
 	}
 
 	@Override
-	public String updateBudgetByName(String name, float budget) throws CustomException {
+	public String updateBudgetByName(String name, float budget) throws ResourceNotFoundException {
 		Team team = teamrepo.findByName(name);
 		if(team!=null)
 		{
@@ -62,28 +63,31 @@ public class TeamServiceImplementation implements TeamService
 		}
 		else
 		{
-			throw new CustomException("No such team is there in the database");
+			throw new ResourceNotFoundException("No such team is there in the database");
 		}
 	}
 
 	@Override
-	public String updateCountByName(String name, Boolean count) throws CustomException {
+	public String updateCountByName(String name, Boolean count) throws ResourceNotFoundException {
 		Team team = teamrepo.findByName(name);
 		if(team!=null)
 		{
+			int value = team.getNoofplayers();
 			if(count)
 			{
-				
+				value = value + 1 ;
+				teamrepo.incrementCountOfTeam(name,value);
 			}
 			else
 			{
-				
+				value = value - 1 ;
+				teamrepo.decrementCountOfTeam(name,value);
 			}
 			return "No.Of Players Updated Successfully";
 		}
 		else
 		{
-			throw new CustomException("No such team is there in the database");
+			throw new ResourceNotFoundException("No such team is there in the database");
 		}
 	}
 	

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import amith.auction.teams.entity.Team;
-import amith.auction.teams.exception.CustomException;
 import amith.auction.teams.service.TeamService;
 
 @RestController
@@ -30,13 +29,7 @@ public class TeamsController
 	@PostMapping(path="/add")
 	public ResponseEntity<String> addTeam(@RequestBody Team team)
 	{
-		try {
-			return new ResponseEntity<String>(service.addNewTeam(team),HttpStatus.OK);
-		}
-		catch(CustomException e)
-		{
-			return new ResponseEntity(e,HttpStatus.BAD_REQUEST);
-		}
+		return new ResponseEntity<String>(service.addNewTeam(team),HttpStatus.OK);
 	}
 	
 	@GetMapping(path="/get")
@@ -48,33 +41,18 @@ public class TeamsController
 	@GetMapping(path="/getByName/{name}")
 	public ResponseEntity<Team> getTeamByName(@PathVariable String name)
 	{
-		try {
-			return new ResponseEntity<Team>(service.getByName(name),HttpStatus.OK);
-		} 
-		catch (CustomException e) {
-			return new ResponseEntity(e,HttpStatus.NOT_FOUND);
-		}
+		return new ResponseEntity<Team>(service.getByName(name),HttpStatus.OK);
 	}
 	
 	@PutMapping(path="/update/{name}/{budget}")
 	public ResponseEntity<String> updateBudget(@PathVariable String name, @PathVariable float budget)
 	{
-		try {
-			return new ResponseEntity<String>(service.updateBudgetByName(name,budget),HttpStatus.OK);
-		} 
-		catch (CustomException e) {
-			return new ResponseEntity(e,HttpStatus.NOT_FOUND);
-		}
+		return new ResponseEntity<String>(service.updateBudgetByName(name,budget),HttpStatus.OK);
 	}
 	
-	@PutMapping(path="/update/{name}/{count}")
+	@PutMapping(path="/updatecount/{name}/{count}")
 	public ResponseEntity<String> updateNoOfPlayers(@PathVariable String name, @PathVariable Boolean count)
 	{
-		try {
-			return new ResponseEntity<String>(service.updateCountByName(name,count),HttpStatus.OK);
-		} 
-		catch (CustomException e) {
-			return new ResponseEntity(e,HttpStatus.NOT_FOUND);
-		}
+		return new ResponseEntity<String>(service.updateCountByName(name,count),HttpStatus.OK);
 	}
 }

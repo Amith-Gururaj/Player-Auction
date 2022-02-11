@@ -1,18 +1,19 @@
 package amith.auction.teams.service;
 
 import amith.auction.teams.entity.Team;
-import amith.auction.teams.exception.CustomException;
+import amith.auction.teams.exception.ResourceAlreadyExistException;
+import amith.auction.teams.exception.ResourceNotFoundException;
 
 public interface TeamService {
 
-	public String addNewTeam(Team team) throws CustomException;
+	public String addNewTeam(Team team) throws ResourceAlreadyExistException;
 
 	public Iterable<Team> getAllTeams();
 
-	public Team getByName(String name) throws CustomException;
+	public Team getByName(String name) throws ResourceNotFoundException;
 
-	public String updateBudgetByName(String name, float budget)throws CustomException;
+	public String updateBudgetByName(String name, float budget)throws ResourceNotFoundException;
 
-	public String updateCountByName(String name, Boolean count)throws CustomException;
+	public String updateCountByName(String name, Boolean count)throws ResourceNotFoundException;
 
 }
